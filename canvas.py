@@ -16,15 +16,15 @@ def render(graph, gap_size, line_width, show_circle_packing):
         vertex_node = graph.get_node(vertex_index)
 
         if vertex_node["type"] == "crossing":
-            draw_crossing(graph, vertex_index, gap_size)
+            draw_crossing(graph, vertex_index, gap_size, line_width)
         else:
-            draw_vertex(graph, vertex_index)
+            draw_vertex(graph, vertex_index, line_width)
 
         if show_circle_packing:
             draw_boundary(graph, vertex_index)
 
     for arc_index in graph.get_arcs():
-        draw_arc(graph, arc_index)
+        draw_arc(graph, arc_index, line_width)
 
         if show_circle_packing:
             draw_boundary(graph, arc_index)
@@ -37,7 +37,7 @@ def render(graph, gap_size, line_width, show_circle_packing):
     plt.show()
 
 
-def draw_arc(graph, arc_index):
+def draw_arc(graph, arc_index, line_width):
     arc_node = graph.get_node(arc_index)
 
     vertex_neighbours = list(
@@ -53,10 +53,10 @@ def draw_arc(graph, arc_index):
     center, radius, start_angle_deg, end_angle_deg = get_circular_arc(
         node_one, arc_node, node_two
     )
-    draw_circular_arc(center, radius, start_angle_deg, end_angle_deg)
+    draw_circular_arc(center, radius, start_angle_deg, end_angle_deg, line_width)
 
 
-def draw_vertex(graph, vertex_index):
+def draw_vertex(graph, vertex_index, line_width):
     vertex_node = graph.get_node(vertex_index)
     arc_neighbours = list(
         filter(
@@ -71,10 +71,10 @@ def draw_vertex(graph, vertex_index):
         center_next, radius_next, start_angle_deg_next, end_angle_deg_next = get_circular_arc(
             node_one, vertex_node, node_next
         )
-        draw_circular_arc(center_next, radius_next, start_angle_deg_next, end_angle_deg_next)
+        draw_circular_arc(center_next, radius_next, start_angle_deg_next, end_angle_deg_next, line_width)
 
 
-def draw_crossing(graph, crossing_index, gap_size):
+def draw_crossing(graph, crossing_index, gap_size, line_width):
     crossing_node = graph.get_node(crossing_index)
 
     # Draw undercrossing
@@ -110,7 +110,7 @@ def draw_crossing(graph, crossing_index, gap_size):
 
     # Undercrossing
     draw_circular_arc(
-        center_under, radius_under, start_angle_deg_under, end_angle_deg_under
+        center_under, radius_under, start_angle_deg_under, end_angle_deg_under, line_width
     )
 
     # Gap
@@ -118,7 +118,7 @@ def draw_crossing(graph, crossing_index, gap_size):
 
     # Overcrossing
     draw_circular_arc(
-        center_over, radius_over, start_angle_deg_over, end_angle_deg_over
+        center_over, radius_over, start_angle_deg_over, end_angle_deg_over, line_width
     )
 
 
@@ -181,7 +181,7 @@ def get_circular_arc(prev_node, current_node, next_node):
     return ((arc_center_x, arc_center_y), radius, start_angle_deg, end_angle_deg)
 
 
-def draw_circular_arc(center, radius, start_angle_deg, end_angle_deg):
+def draw_circular_arc(center, radius, start_angle_deg, end_angle_deg, line_width):
     arc = Arc(
         center,
         2 * radius,
@@ -190,7 +190,7 @@ def draw_circular_arc(center, radius, start_angle_deg, end_angle_deg):
         theta1=start_angle_deg,
         theta2=end_angle_deg,
         edgecolor="black",
-        linewidth=1,
+        linewidth=line_width,
     )
     plt.gca().add_patch(arc)
 
